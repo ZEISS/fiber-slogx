@@ -17,7 +17,9 @@ func main() {
 
 	app := fiber.New()
 
-	app.Use(slogx.New(logger.WithGroup("http")))
+	cfg := slogx.Config{}
+
+	app.Use(slogx.New(logger.WithGroup("http"), cfg))
 	// config := slogfiber.Config{WithRequestBody: true, WithResponseBody: true, WithRequestHeader: true, WithResponseHeader: true}
 	// app.Use(slogfiber.NewWithConfig(logger, config))
 	app.Use(safe.New())
