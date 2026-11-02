@@ -26,6 +26,14 @@ const (
 	requestIDHeaderKey = "X-Request-Id"
 )
 
+// MessageFormatter defines a function to format log messages.
+type MessageFormatter func(c fiber.Ctx, err error) string
+
+// DefaultMessageFormatter returns the default message formatter.
+func DefaultMessageFormatter(_ fiber.Ctx, _ error) string {
+	return "incoming request"
+}
+
 // Config caputes the configuration for running the goth middleware.
 type Config struct {
 	// Next defines a function to skip this middleware when returned true.
@@ -36,16 +44,19 @@ type Config struct {
 	Filters []Filter
 	// RequestHeaders defines the list of request headers to include in log records.
 	RequestHeaders map[string]struct{}
+	// MessageFormatter defines a function to format log messages.
+	MessageFormatter MessageFormatter
 }
 
 // DefaultConfig returns the default configuration for the goth middleware.
 var DefaultConfig = Config{
-	LogLevel:       slog.LevelInfo,
-	RequestHeaders: RequestHeaders,
+	LogLevel:         slog.LevelInfo,
+	RequestHeaders:   DefaultRequestHeaders,
+	MessageFormatter: DefaultMessageFormatter,
 }
 
-// RequestHeaders defines the list of request headers to include in log records.
-var RequestHeaders = map[string]struct{}{
+// DefaultRequestHeaders defines the list of request headers to include in log records.
+var DefaultRequestHeaders = map[string]struct{}{
 	"accept":          {},
 	"accept-encoding": {},
 	"accept-language": {},
@@ -110,8 +121,9 @@ func New(logger *slog.Logger, config ...Config) fiber.Handler {
 		)
 
 		level := cfg.LogLevel
+		msg := cfg.MessageFormatter(c, nil)
 
-		logger.LogAttrs(c, level, "incoming request", attributes...)
+		logger.LogAttrs(c, level, msg, attributes...)
 
 		return c.Next()
 	}
@@ -131,6 +143,10 @@ func configDefault(config ...Config) Config {
 
 	if cfg.RequestHeaders == nil {
 		cfg.RequestHeaders = DefaultConfig.RequestHeaders
+	}
+
+	if cfg.MessageFormatter == nil {
+		cfg.MessageFormatter = DefaultConfig.MessageFormatter
 	}
 
 	return cfg
