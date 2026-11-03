@@ -12,7 +12,10 @@ tool (
 	mvdan.cc/gofumpt
 )
 
-require github.com/gofiber/fiber/v3 v3.6.1
+require (
+	github.com/gofiber/fiber/v3 v3.6.1
+	github.com/google/uuid v1.6.0
+)
 
 require (
 	4d63.com/gocheckcompilerdirectives v1.4.0 // indirect
@@ -273,7 +276,6 @@ require (
 	github.com/google/ko v0.19.1 // indirect
 	github.com/google/s2a-go v0.1.9 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/google/wire v0.7.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.20 // indirect
 	github.com/googleapis/gax-go/v2 v2.24.0 // indirect
